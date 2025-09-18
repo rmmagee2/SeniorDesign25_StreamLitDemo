@@ -3,6 +3,13 @@ import time
 import json
 import streamlit as st
 
+# Load API key from Streamlit secrets or environment variable
+if "OPENAI_API_KEY" in st.secrets:
+    os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
+elif not os.getenv("OPENAI_API_KEY"):
+    st.error("Missing OpenAI API key. Please set it in Streamlit Secrets.")
+    st.stop()
+    
 # --- OpenAI client with graceful fallbacks (new SDK and legacy) ---
 CLIENT_MODE = None
 client = None
@@ -246,3 +253,4 @@ with col2:
                 text_dump.append(f"{turn['who']}: {turn['text']}")
             text_str = "\n\n".join(text_dump)
             st.download_button("Download transcript TXT", text_str, file_name=txt_path, mime="text/plain", use_container_width=True)
+
